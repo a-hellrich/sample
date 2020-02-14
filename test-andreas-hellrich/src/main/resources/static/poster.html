@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poster</title>
+	
+  </head>
+  <body>
+	<div id="posted"></div>
+	<script>
+	var http = new XMLHttpRequest();
+	var url = "/personen";
+	
+	var myJSONobj = '{"name": "Alfred Jodokus",'+
+        '"lastname": "Kwak",'+
+        '"zipcode": "12433",'+
+        '"city": "Großwasserland",'+
+        '"color": "rot"}';
+	
+	var params = JSON.stringify(myJSONobj);
+	http.open("POST", url, true);
+
+	document.getElementById("posted").innerHTML = "posted.";
+	//Send the proper header information along with the request
+	http.setRequestHeader("Content-type", "application/json");
+
+	http.onreadystatechange = function() {
+		if(http.readyState == 4 && http.status == 200) {
+			alert(http.responseText);//the JSON string from server will show here
+		}
+	}
+	http.send(params);
+	</script>
+  </body>
+</html>
