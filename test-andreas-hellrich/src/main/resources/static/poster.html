@@ -10,24 +10,23 @@
 	<div id="posted"></div>
 	<script>
 	var http = new XMLHttpRequest();
-	var url = "/personen";
+	var url = "/persons";
 	
-	var myJSONobj = '{"name": "Alfred Jodokus",'+
-        '"lastname": "Kwak",'+
-        '"zipcode": "12433",'+
-        '"city": "Großwasserland",'+
-        '"color": "rot"}';
+	var myJSONobj = {"name":"Hannes","lastname":"Schinder","zipcode":"80331","city":"München","color":"grün"};
 	
 	var params = JSON.stringify(myJSONobj);
 	http.open("POST", url, true);
 
-	document.getElementById("posted").innerHTML = "posted.";
+	
 	//Send the proper header information along with the request
 	http.setRequestHeader("Content-type", "application/json");
 
 	http.onreadystatechange = function() {
 		if(http.readyState == 4 && http.status == 200) {
-			alert(http.responseText);//the JSON string from server will show here
+			document.getElementById("posted").innerHTML = "posted.";
+		}
+		else{
+			document.getElementById("posted").innerHTML = "post failed.";
 		}
 	}
 	http.send(params);

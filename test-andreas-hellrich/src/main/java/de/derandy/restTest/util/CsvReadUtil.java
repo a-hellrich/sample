@@ -21,7 +21,7 @@ import de.derandy.restTest.service.PersonService;
 
 @Component
 @EnableAutoConfiguration
-public class CsvUtil {
+public class CsvReadUtil {
 
 	private int targetsize = 4;
 	

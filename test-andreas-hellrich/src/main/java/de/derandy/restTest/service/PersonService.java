@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import de.derandy.restTest.model.Person;
 import de.derandy.restTest.repository.PersonRepository;
-import de.derandy.restTest.util.CsvUtil;
+import de.derandy.restTest.util.CsvReadUtil;
 
 @Service
 @EnableAutoConfiguration
@@ -24,7 +24,7 @@ public class PersonService {
 	PersonRepository personRepository;
 	
 	@Autowired 
-	CsvUtil csvUtil;
+	CsvReadUtil csvUtil;
 	
 	@Autowired
 	Environment env;
