@@ -24,8 +24,6 @@ public class PersonController {
 
 	@Autowired
 	PersonService personService;
-	
-	
 
 	/***
 	 * Gibt alle Personen zurück
@@ -63,5 +61,4 @@ public class PersonController {
 
 	}
 
-	
 }

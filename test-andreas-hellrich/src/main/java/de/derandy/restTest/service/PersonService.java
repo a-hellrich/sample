@@ -29,7 +29,7 @@ public class PersonService {
 	@Autowired
 	Environment env;
 	
-	private String csv_source = "\\sample-input.csv";
+	private String csv_source = ".\\sample-input.csv";
 	
 	/***
 	 * Gibt alle Personen zurück
