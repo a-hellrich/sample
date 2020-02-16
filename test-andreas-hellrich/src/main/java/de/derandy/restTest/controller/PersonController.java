@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.derandy.restTest.model.Person;
 import de.derandy.restTest.service.PersonService;
-import de.derandy.restTest.util.CsvWriteUtil;
 
 @RestController
 @EnableAutoConfiguration
@@ -26,8 +25,7 @@ public class PersonController {
 	@Autowired
 	PersonService personService;
 	
-	@Autowired
-	CsvWriteUtil csvWriteUtil;
+	
 
 	/***
 	 * Gibt alle Personen zurück
@@ -65,28 +63,5 @@ public class PersonController {
 
 	}
 
-	/***
-	 * Dient dazu, Personen in die CSV zu schreiben
-	 * 
-	 * @param payload
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/persons", method = RequestMethod.POST)
-	public void process(@RequestBody Person payload) throws Exception {
-
-		
-		
-		String name = payload.getName();
-		String lastname = payload.getLastname();
-		String zipcode = payload.getZipcode();
-		String city = payload.getCity();
-		String color = payload.getColor();
-		
-		System.out.println("received: "+name+" "+lastname+" "+zipcode+" "+city+" "+color);
-		
-		String csv_source = "\\sample-output.csv";
-		
-		csvWriteUtil.write(csv_source,name,lastname,zipcode,city,color);
-
-	}
+	
 }

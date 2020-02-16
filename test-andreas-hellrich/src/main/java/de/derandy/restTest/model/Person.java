@@ -34,6 +34,15 @@ public class Person {
 			this.color = color;
 		}
 
+		public Person(Long id,String name, String lastname, String zipcode, String city, String color) {
+			this.id = id;
+			this.name = name;
+			this.lastname = lastname;
+			this.zipcode = zipcode;
+			this.city = city;
+			this.color = color;
+		}
+		
 		@Override
 		public String toString() {
 			return "Person [id=" + id + ", name=" + name + ", lastname=" + lastname + ", zipcode=" + zipcode + ", city="

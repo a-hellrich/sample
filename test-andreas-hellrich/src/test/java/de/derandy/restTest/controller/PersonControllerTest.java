@@ -1,7 +1,5 @@
 package de.derandy.restTest.controller;
 
-
-
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
@@ -52,6 +50,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
+import de.derandy.restTest.model.Color;
 import de.derandy.restTest.model.Person;
 import de.derandy.restTest.repository.PersonRepository;
 import de.derandy.restTest.service.PersonService;
@@ -61,145 +60,90 @@ import de.derandy.restTest.service.PersonService;
 @AutoConfigureMockMvc
 class PersonControllerTest {
 
-	
-	
 	@Autowired
-    private MockMvc mvc;
-	
+	private MockMvc mvc;
+
 	@LocalServerPort
 	int randomServerPort;
-	 
+
 	@MockBean
 	PersonService personService;
-		
-	
 
-	
-	
+	@Autowired
+	Color color;
+
+	Person peter = new Person(1L, "Peter", "Petersen", "11111", "Petershausen", "blau");
+	Person kati = new Person(2L, "Kati", "Katulki", "20922", "Sonstwo", "blau");
+	Person klaus = new Person(3L, "Klaus", "Klauser", "11112", "Klausen", "grün");
+	Person wambo = new Person(4L, "Wambo", "Gürtel", "33333", "Am Ende", "violett");
+	Person donald = new Person(5L, "Donald", "Duck", "33322", "Entenhausen", "rot");
+	ArrayList<Person> personen = new ArrayList<Person>(Arrays.asList(peter, kati, klaus, wambo, donald));
+
 	@Test
 	void testPersons() throws URISyntaxException {
 
-		Person peter = new Person("Peter", "Petersen", "11111", "Petershausen", "blau");
-		Person kati  = new Person("Kati", "Katulki", "20922", "Sonstwo", "blau");
-		Person klaus = new Person("Klaus", "Klauser", "11112", "Klausen","grün");
-		Person wambo = new Person("Wambo", "Gürtel", "33333", "Am Ende", "grün");
-		Person donald = new Person("Donald", "Duck", "33322", "Entenhausen", "rot");
-		ArrayList<Person> personen = new ArrayList<Person>();
-		peter.setId(1L);
-		personen.add(peter);
-		kati.setId(2L);
-		personen.add(kati);
-		klaus.setId(3L);
-		personen.add(klaus);
-		wambo.setId(4L);
-		personen.add(wambo);
-		donald.setId(5L);
-		personen.add(donald);
-		
-		Mockito.when(personService.findAll()).thenReturn( personen);
+		Mockito.when(personService.findAll()).thenReturn(personen);
+
+		ResponseEntity<String> result = getResult("/persons");
 	
-		RestTemplate restTemplate = new RestTemplate();
-	     
-	    final String baseUrl = "http://localhost:" + randomServerPort + "/persons";
-	    URI uri = new URI(baseUrl);
-	 
-	    ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
-	     System.out.println(result);
-	    
-	    Assert.assertEquals(200, result.getStatusCodeValue());
-	    Assert.assertTrue(result.getBody().contains("Peter"));
-	    Assert.assertTrue(result.getBody().contains("Kati"));
-	    Assert.assertTrue(result.getBody().contains("Klaus"));
-	    Assert.assertTrue(result.getBody().contains("Wambo"));
-	    Assert.assertTrue(result.getBody().contains("Donald"));
-		
-		
+
+		Assert.assertEquals(200, result.getStatusCodeValue());
+		Assert.assertTrue(result.getBody().contains("Peter"));
+		Assert.assertTrue(result.getBody().contains("Kati"));
+		Assert.assertTrue(result.getBody().contains("Klaus"));
+		Assert.assertTrue(result.getBody().contains("Wambo"));
+		Assert.assertTrue(result.getBody().contains("Donald"));
+
 	}
 
 	@Test
 	void testPersonId() throws URISyntaxException {
-	
-		Person peter = new Person("Peter", "Petersen", "11111", "Petershausen", "blau");
-		Person kati  = new Person("Kati", "Katulki", "20922", "Sonstwo", "blau");
-		Person klaus = new Person("Klaus", "Klauser", "11112", "Klausen","grün");
-		Person wambo = new Person("Wambo", "Gürtel", "33333", "Am Ende", "grün");
-		Person donald = new Person("Donald", "Duck", "33322", "Entenhausen", "rot");
-		ArrayList<Person> personen = new ArrayList<Person>();
-		peter.setId(1L);
-		personen.add(peter);
-		kati.setId(2L);
-		personen.add(kati);
-		klaus.setId(3L);
-		personen.add(klaus);
-		wambo.setId(4L);
-		personen.add(wambo);
-		donald.setId(5L);
-		personen.add(donald);
+
+		Mockito.when(personService.findById(1L)).thenReturn(personen.get(0));
+
 		
-		Person personToFind = personen.stream()                        
-                .filter(x -> Long.valueOf("1").equals(x.getId()))       
-                .findAny()                                      
-                .orElse(null);    
+
+		ResponseEntity<String> result = getResult("/persons/1");
 		
-		Mockito.when(personService.findById(1L)).thenReturn(personToFind);
-	
-		RestTemplate restTemplate = new RestTemplate();
-	     
-	    final String baseUrl = "http://localhost:" + randomServerPort + "/persons/1";
-	    URI uri = new URI(baseUrl);
-	 
-	    ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
-	     System.out.println(result);
-	    
-	    Assert.assertEquals(200, result.getStatusCodeValue());
-	    Assert.assertEquals(true,result.getBody().contains("Peter"));
-	    Assert.assertFalse(result.getBody().contains("Kati"));
-	    Assert.assertFalse(result.getBody().contains("Klaus"));
-	    Assert.assertFalse(result.getBody().contains("Wambo"));
-	    Assert.assertFalse(result.getBody().contains("Donald"));
+
+		Assert.assertEquals(200, result.getStatusCodeValue());
+		Assert.assertEquals(true, result.getBody().contains("Peter"));
+		Assert.assertFalse(result.getBody().contains("Kati"));
+		Assert.assertFalse(result.getBody().contains("Klaus"));
+		Assert.assertFalse(result.getBody().contains("Wambo"));
+		Assert.assertFalse(result.getBody().contains("Donald"));
 	}
 
 	@Test
 	void testPersonColor() throws URISyntaxException {
-		
-		Person peter = new Person("Peter", "Petersen", "11111", "Petershausen", "blau");
-		Person kati  = new Person("Kati", "Katulki", "20922", "Sonstwo", "blau");
-		Person klaus = new Person("Klaus", "Klauser", "11112", "Klausen","grün");
-		Person wambo = new Person("Wambo", "Gürtel", "33333", "Am Ende", "grün");
-		Person donald = new Person("Donald", "Duck", "33322", "Entenhausen", "rot");
-		ArrayList<Person> personen = new ArrayList<Person>();
-		peter.setId(1L);
-		personen.add(peter);
-		kati.setId(2L);
-		personen.add(kati);
-		klaus.setId(3L);
-		personen.add(klaus);
-		wambo.setId(4L);
-		personen.add(wambo);
-		donald.setId(5L);
-		personen.add(donald);
-		
-		ArrayList<Person> filteredPersonen =  (ArrayList<Person>) personen.stream()                    
-                .filter(x -> "blau".equals(x.getColor())).collect(Collectors.toList()); 
-                                                
-                
-		
+
+		ArrayList<Person> personen = new ArrayList<Person>(Arrays.asList(peter, kati, klaus, wambo, donald));
+
+		ArrayList<Person> filteredPersonen = (ArrayList<Person>) personen.stream()
+				.filter(x -> "blau".equals(x.getColor())).collect(Collectors.toList());
+
 		Mockito.when(personService.findByColor(1L)).thenReturn(filteredPersonen);
+
+		ResponseEntity<String> result = getResult("/persons/color/1");
+		
+
+		Assert.assertEquals(200, result.getStatusCodeValue());
+		Assert.assertTrue(result.getBody().contains("Peter"));
+		Assert.assertTrue(result.getBody().contains("Kati"));
+		Assert.assertFalse(result.getBody().contains("Klaus"));
+		Assert.assertFalse(result.getBody().contains("Wambo"));
+		Assert.assertFalse(result.getBody().contains("Donald"));
+	}
 	
+		ResponseEntity<String> getResult(String ending) throws URISyntaxException {
 		RestTemplate restTemplate = new RestTemplate();
-	     
-	    final String baseUrl = "http://localhost:" + randomServerPort + "/persons/color/1";
-	    URI uri = new URI(baseUrl);
-	 
-	    ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
-	     System.out.println(result);
-	    
-	    Assert.assertEquals(200, result.getStatusCodeValue());
-	    Assert.assertTrue(result.getBody().contains("Peter"));
-	    Assert.assertTrue(result.getBody().contains("Kati"));
-	    Assert.assertFalse(result.getBody().contains("Klaus"));
-	    Assert.assertFalse(result.getBody().contains("Wambo"));
-	    Assert.assertFalse(result.getBody().contains("Donald"));
+
+		final String baseUrl = "http://localhost:" + randomServerPort + ending;
+		URI uri = new URI(baseUrl);
+
+		ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+		
+		return result;
 	}
 
 }

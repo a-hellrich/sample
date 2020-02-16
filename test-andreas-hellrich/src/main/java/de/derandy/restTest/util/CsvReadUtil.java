@@ -1,3 +1,4 @@
+
 package de.derandy.restTest.util;
 
 import java.io.FileReader;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.opencsv.CSVReader;
 
+import de.derandy.restTest.model.Color;
 import de.derandy.restTest.model.Person;
 import de.derandy.restTest.repository.PersonRepository;
 import de.derandy.restTest.service.PersonService;
@@ -25,10 +27,17 @@ public class CsvReadUtil {
 
 	private int targetsize = 4;
 	
-	private String[] colors = {"blau", "grün","violett","rot","gelb","türkis","weiß"};
+
 	
 	@Autowired	
 	PersonService personService;
+	
+	@Autowired
+	Color color;
+	
+	
+	private String[] colors;
+	
 	
 	/***
 	 * Dient dazu, die CSV Datei einzulesen
@@ -110,8 +119,7 @@ public class CsvReadUtil {
 		
 		ArrayList<String> newRecord = record;
 		
-		newRecord.removeAll(Collections.singleton(null));
-		newRecord.removeAll(Collections.singleton(""));
+		
 		newRecord.removeAll(Collections.singleton(" "));
 		
 		return newRecord;
@@ -161,8 +169,9 @@ public class CsvReadUtil {
 	 * @param records
 	 */
 	public  void createPersonen(ArrayList<ArrayList<String>> records) {
-		
-		
+		int length = color.getColors().length;
+		colors = new String[length];
+		colors = color.getColors();
 		
 		for(int i = 0; i<records.size();i++) {
 			
@@ -172,6 +181,7 @@ public class CsvReadUtil {
 	
 			
 			Integer thisColorPosition = Integer.parseInt(thisRecord.get(4)) -1;
+			
 			String thisColor = colors[thisColorPosition];
 			
 			de.derandy.restTest.model.Person newPerson = new de.derandy.restTest.model.Person( thisRecord.get(1), thisRecord.get(0), thisRecord.get(2),thisRecord.get(3), thisColor );
@@ -182,3 +192,4 @@ public class CsvReadUtil {
 	}
 	
 }
+
