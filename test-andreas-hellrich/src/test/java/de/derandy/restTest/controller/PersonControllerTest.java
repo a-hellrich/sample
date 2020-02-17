@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,10 +52,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
-import de.derandy.restTest.model.Color;
+import de.derandy.restTest.model.MyColor;
 import de.derandy.restTest.model.Person;
 import de.derandy.restTest.repository.PersonRepository;
 import de.derandy.restTest.service.PersonService;
+import de.derandy.restTest.util.Flags;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -70,7 +73,10 @@ class PersonControllerTest {
 	PersonService personService;
 
 	@Autowired
-	Color color;
+	MyColor color;
+	
+	@Autowired
+	Flags flags;
 
 	Person peter = new Person(1L, "Peter", "Petersen", "11111", "Petershausen", "blau");
 	Person kati = new Person(2L, "Kati", "Katulki", "20922", "Sonstwo", "blau");
@@ -79,15 +85,19 @@ class PersonControllerTest {
 	Person donald = new Person(5L, "Donald", "Duck", "33322", "Entenhausen", "rot");
 	ArrayList<Person> personen = new ArrayList<Person>(Arrays.asList(peter, kati, klaus, wambo, donald));
 
+	
+	/***
+	 * Testet den Zugriff auf alle Personen
+	 * @throws URISyntaxException
+	 */
 	@Test
 	void testPersons() throws URISyntaxException {
 
 		Mockito.when(personService.findAll()).thenReturn(personen);
 
 		ResponseEntity<String> result = getResult("/persons");
-	
 
-		Assert.assertEquals(200, result.getStatusCodeValue());
+		Assert.assertTrue(200 == result.getStatusCodeValue());
 		Assert.assertTrue(result.getBody().contains("Peter"));
 		Assert.assertTrue(result.getBody().contains("Kati"));
 		Assert.assertTrue(result.getBody().contains("Klaus"));
@@ -96,17 +106,18 @@ class PersonControllerTest {
 
 	}
 
+	/***
+	 * Testet den Zugriff auf die Person mit der ID
+	 * @throws URISyntaxException
+	 */
 	@Test
 	void testPersonId() throws URISyntaxException {
 
 		Mockito.when(personService.findById(1L)).thenReturn(personen.get(0));
 
-		
-
 		ResponseEntity<String> result = getResult("/persons/1");
-		
 
-		Assert.assertEquals(200, result.getStatusCodeValue());
+		Assert.assertTrue(200 == result.getStatusCodeValue());
 		Assert.assertEquals(true, result.getBody().contains("Peter"));
 		Assert.assertFalse(result.getBody().contains("Kati"));
 		Assert.assertFalse(result.getBody().contains("Klaus"));
@@ -114,10 +125,14 @@ class PersonControllerTest {
 		Assert.assertFalse(result.getBody().contains("Donald"));
 	}
 
+	/***
+	 * Testet den Zugriff auf alle Personen mit der Farbe
+	 * @throws URISyntaxException
+	 */
 	@Test
 	void testPersonColor() throws URISyntaxException {
 
-		ArrayList<Person> personen = new ArrayList<Person>(Arrays.asList(peter, kati, klaus, wambo, donald));
+		
 
 		ArrayList<Person> filteredPersonen = (ArrayList<Person>) personen.stream()
 				.filter(x -> "blau".equals(x.getColor())).collect(Collectors.toList());
@@ -125,25 +140,63 @@ class PersonControllerTest {
 		Mockito.when(personService.findByColor(1L)).thenReturn(filteredPersonen);
 
 		ResponseEntity<String> result = getResult("/persons/color/1");
-		
 
-		Assert.assertEquals(200, result.getStatusCodeValue());
+		Assert.assertTrue(200  == result.getStatusCodeValue());
 		Assert.assertTrue(result.getBody().contains("Peter"));
 		Assert.assertTrue(result.getBody().contains("Kati"));
 		Assert.assertFalse(result.getBody().contains("Klaus"));
 		Assert.assertFalse(result.getBody().contains("Wambo"));
 		Assert.assertFalse(result.getBody().contains("Donald"));
+		
+		
+	}
+
+	/***
+	 * Testet den Post
+	 * @throws Exception
+	 */
+	@Test
+	void testPost() throws Exception{
+		
+		flags.setReal(false);
+		
+		 mvc.perform(MockMvcRequestBuilders.post("/persons")
+	                .content(asJsonString(peter))
+	                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+	                .andExpect(status().isOk());
+		 
+		 flags.setReal(true);
 	}
 	
-		ResponseEntity<String> getResult(String ending) throws URISyntaxException {
+	/***
+	 * Gibt die Response Entity zurück
+	 * @param ending
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	ResponseEntity<String> getResult(String ending) throws URISyntaxException {
 		RestTemplate restTemplate = new RestTemplate();
 
 		final String baseUrl = "http://localhost:" + randomServerPort + ending;
 		URI uri = new URI(baseUrl);
 
 		ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
-		
+
 		return result;
 	}
+
+	/***
+	 * Wandelt ein Objkekt in eine JSON String um
+	 * @param obj
+	 * @return
+	 */
+	 public static String asJsonString(final Object obj) {
+	        try {
+	            return new ObjectMapper().writeValueAsString(obj);
+	        } catch (Exception e) {
+	            throw new RuntimeException(e);
+	        }
+	    }
+	
 
 }

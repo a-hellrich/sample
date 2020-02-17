@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Color {
+public class MyColor {
 
 	private final String BLAU = "blau";
 	private final String GRÜN = "grün";

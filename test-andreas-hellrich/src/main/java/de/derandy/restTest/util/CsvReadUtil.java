@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.opencsv.CSVReader;
 
-import de.derandy.restTest.model.Color;
+import de.derandy.restTest.model.MyColor;
 import de.derandy.restTest.model.Person;
 import de.derandy.restTest.repository.PersonRepository;
 import de.derandy.restTest.service.PersonService;
@@ -31,7 +31,7 @@ public class CsvReadUtil {
 	PersonService personService;
 
 	@Autowired
-	Color color;
+	MyColor color;
 
 	private String[] colors;
 
