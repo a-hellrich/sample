@@ -77,13 +77,15 @@ public class CsvReadUtil {
 		for (int i = 0; i < newRecords.size(); i++) {
 
 			ArrayList<String> record = (ArrayList<String>) newRecords.get(i);
-
+			
+			
 			if (i < newRecords.size() - 1) {
 				ArrayList<String> nextRecord = (ArrayList<String>) newRecords.get(i + 1);
 
 				int size = record.size();
-
-				if (size < targetsize) {
+				int nextsize = nextRecord.size();
+				
+				if (size < targetsize && nextsize < targetsize) {
 					for (int j = 0; j < nextRecord.size(); j++) {
 						record.add(nextRecord.get(j));
 					}
