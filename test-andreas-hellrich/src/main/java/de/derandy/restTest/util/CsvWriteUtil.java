@@ -23,59 +23,21 @@ public class CsvWriteUtil {
 	 * @param color
 	 * @throws IOException
 	 */
+	
+	@Autowired 
+	MyColor myColor;
+	
 	public void write(String csv_source,String name,String lastname,String zipcode,String city,String color) throws IOException {
 		
 		
-		FileWriter pw = new FileWriter(csv_source, true);
+		
         
         
-       
+			String newcolor = myColor.getColorVal(color);
+			FileWriter pw = new FileWriter(csv_source, true);
 			
-            pw.append(lastname);
-            pw.append(", ");
-            pw.append(name);
-            pw.append(", ");
-            pw.append(zipcode);
-            pw.append(", ");
-            pw.append(city);
-            pw.append(", ");
-            
-            
-        
-            
-            switch(color){
-            	
-            case "blau":
-            	pw.append("1");
-            	break;
-            	
-            case "grün":
-            	pw.append("2");
-            	break;
-            	
-            case "violett":
-            	pw.append("3");
-            	break;
-            
-            case "rot":
-            	pw.append("4");
-            	break;
-            	
-            case "gelb":
-            	pw.append("5");
-            	break;
-            	
-            case "türkies":
-            	pw.append("6");
-            	break;
-            	
-            case "weiß":
-            	pw.append("7");
-            	break;
-            	
-            }
-            
-            pw.append("\n");
+            pw.append(lastname+", "+name+", "+zipcode+" "+city+", "+newcolor+"\n");
+          
             pw.flush();
             pw.close();
     

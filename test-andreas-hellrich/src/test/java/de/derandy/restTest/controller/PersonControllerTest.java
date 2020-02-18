@@ -98,11 +98,11 @@ class PersonControllerTest {
 		ResponseEntity<String> result = getResult("/persons");
 
 		Assert.assertTrue(200 == result.getStatusCodeValue());
-		Assert.assertTrue(result.getBody().contains("Peter"));
-		Assert.assertTrue(result.getBody().contains("Kati"));
-		Assert.assertTrue(result.getBody().contains("Klaus"));
-		Assert.assertTrue(result.getBody().contains("Wambo"));
-		Assert.assertTrue(result.getBody().contains("Donald"));
+		Assert.assertTrue(result.getBody().contains(peter.getLastname()));
+		Assert.assertTrue(result.getBody().contains(kati.getLastname()));
+		Assert.assertTrue(result.getBody().contains(klaus.getLastname()));
+		Assert.assertTrue(result.getBody().contains(wambo.getLastname()));
+		Assert.assertTrue(result.getBody().contains(donald.getLastname()));
 
 	}
 
@@ -118,11 +118,11 @@ class PersonControllerTest {
 		ResponseEntity<String> result = getResult("/persons/1");
 
 		Assert.assertTrue(200 == result.getStatusCodeValue());
-		Assert.assertEquals(true, result.getBody().contains("Peter"));
-		Assert.assertFalse(result.getBody().contains("Kati"));
-		Assert.assertFalse(result.getBody().contains("Klaus"));
-		Assert.assertFalse(result.getBody().contains("Wambo"));
-		Assert.assertFalse(result.getBody().contains("Donald"));
+		Assert.assertEquals(true, result.getBody().contains(peter.getLastname()));
+		Assert.assertFalse(result.getBody().contains(kati.getLastname()));
+		Assert.assertFalse(result.getBody().contains(klaus.getLastname()));
+		Assert.assertFalse(result.getBody().contains(wambo.getLastname()));
+		Assert.assertFalse(result.getBody().contains(donald.getLastname()));
 	}
 
 	/***
@@ -142,11 +142,11 @@ class PersonControllerTest {
 		ResponseEntity<String> result = getResult("/persons/color/1");
 
 		Assert.assertTrue(200  == result.getStatusCodeValue());
-		Assert.assertTrue(result.getBody().contains("Peter"));
-		Assert.assertTrue(result.getBody().contains("Kati"));
-		Assert.assertFalse(result.getBody().contains("Klaus"));
-		Assert.assertFalse(result.getBody().contains("Wambo"));
-		Assert.assertFalse(result.getBody().contains("Donald"));
+		Assert.assertTrue(result.getBody().contains(peter.getLastname()));
+		Assert.assertTrue(result.getBody().contains(kati.getLastname()));
+		Assert.assertFalse(result.getBody().contains(klaus.getLastname()));
+		Assert.assertFalse(result.getBody().contains(wambo.getLastname()));
+		Assert.assertFalse(result.getBody().contains(donald.getLastname()));
 		
 		
 	}
